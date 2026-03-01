@@ -1,0 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer base {
+  * { box-sizing: border-box; }
+
+  body {
+    @apply bg-[#182c38] text-white antialiased;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  }
+
+  ::-webkit-scrollbar       { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { @apply bg-[#0f1f28]; }
+  ::-webkit-scrollbar-thumb { @apply bg-[#FE7F2D]/40 rounded-full; }
+  ::-webkit-scrollbar-thumb:hover { @apply bg-[#FE7F2D]/70; }
+}
+
+@layer utilities {
+  .font-mono { font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace; }
+
+  .pumpkin-glow {
+    box-shadow: 0 0 20px rgba(254, 127, 45, 0.3);
+  }
+
+  .prose-autodoc {
+    @apply prose prose-invert prose-sm max-w-none;
+    @apply prose-headings:text-[#FE7F2D] prose-a:text-blue-400;
+    @apply prose-code:text-green-300 prose-code:bg-[#233D4D] prose-code:px-1 prose-code:rounded;
+    @apply prose-pre:bg-[#182c38] prose-pre:border prose-pre:border-[#FE7F2D]/10;
+    @apply prose-blockquote:border-[#FE7F2D] prose-blockquote:text-slate-300;
+  }
+}

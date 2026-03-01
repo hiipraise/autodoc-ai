@@ -1,0 +1,34 @@
+{
+  "$schema": "https://autodoc.ai/schema/config.json",
+  "version": "1",
+  "output": "./README.md",
+  "ai": {
+    "provider": "groq",
+    "model": "llama3-70b-8192",
+    "fallback": "ollama",
+    "ollamaModel": "codellama:7b"
+  },
+  "scan": {
+    "maxDepth": 8,
+    "maxFileSizeKB": 100,
+    "includeHidden": false,
+    "extraIgnore": ["*.test.ts", "*.spec.ts", "coverage/", "*.log"]
+  },
+  "readme": {
+    "sections": ["header", "features", "filetree", "installation", "usage", "tech-stack", "license"],
+    "showBadges": true,
+    "showFileIcons": true,
+    "treeMaxDepth": 4,
+    "license": "MIT"
+  },
+  "watch": {
+    "debounceMs": 1500,
+    "triggerOnAdd": true,
+    "triggerOnDelete": true,
+    "triggerOnChange": true
+  },
+  "branding": {
+    "footer": true,
+    "footerText": "Generated with AutoDoc.ai"
+  }
+}
