@@ -13,7 +13,7 @@ export function generateLicenseSection(profile: ProjectProfile): string {
   const year = new Date().getFullYear();
   const link = LICENSE_LINKS[license];
 
-  const lines = ['## 📄 License', ''];
+  const lines = ['## License', ''];
   if (link) {
     lines.push(`This project is licensed under the [${license} License](${link}).`);
   } else {

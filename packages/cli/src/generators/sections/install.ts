@@ -1,7 +1,7 @@
 import type { ProjectProfile } from '../../core/detector';
 
 export function generateInstallSection(profile: ProjectProfile): string {
-  const lines: string[] = ['## 🚀 Installation', ''];
+  const lines: string[] = ['## Installation', ''];
 
   // Prerequisites
   lines.push('### Prerequisites', '');

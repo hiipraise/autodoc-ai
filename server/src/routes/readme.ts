@@ -45,7 +45,7 @@ readmeRouter.post('/regenerate', async (req, res) => {
   }
 });
 
-readmeRouter.get('/history ale', (_req, res) => {
+readmeRouter.get('/history', (_req, res) => {
   res.json({ success: true, data: history });
 });
 
@@ -89,6 +89,17 @@ async function generateBasicReadme(dir: string): Promise<string> {
     '',
     description ? `> ${description}` : '',
     '',
+    '## Platform Overview',
+    '',
+    'This README was generated from discovered project files and package metadata.',
+    'Use it as a baseline and refine section details for your specific workflows.',
+    '',
+    '## Project Structure Guidance',
+    '',
+    '- Keep source code in clearly named directories (for example `src/`, `packages/`, or `app/`).',
+    '- Group infrastructure files (`Dockerfile`, CI configs, lint settings) near repository root.',
+    '- Place end-user documentation under `docs/` so AutoDoc can include it in future runs.',
+    '',
     '## Installation',
     '',
     '```bash',
@@ -109,6 +120,6 @@ async function generateBasicReadme(dir: string): Promise<string> {
     '',
     '---',
     '',
-    '> 📖 Generated with [AutoDoc.ai](https://github.com/autodoc-ai/autodoc)',
+    '> Generated with [AutoDoc.ai](https://github.com/autodoc-ai/autodoc)',
   ].filter(Boolean).join('\n');
 }

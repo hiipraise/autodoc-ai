@@ -24,7 +24,7 @@ describe('README generators', () => {
     const section = generateFeaturesSection(features);
     expect(section).toContain('Supports X');
     expect(section).toContain('Provides Y');
-    expect(section).toContain('## ✨ Features');
+    expect(section).toContain('## Features');
   });
 
   it('features section should return empty string with no features', () => {
@@ -35,7 +35,7 @@ describe('README generators', () => {
   it('license section should include license type', () => {
     const section = generateLicenseSection(MOCK_PROFILE);
     expect(section).toContain('MIT');
-    expect(section).toContain('## 📄 License');
+    expect(section).toContain('## License');
   });
 
   it('ascii tree should render properly', () => {

@@ -5,7 +5,7 @@
     /   | __  __/ /_____/ __ \____  _____   ____ _(_)
    / /| |/ / / / __/ __ / / / / __ \/ ___/  / __ `/ /
   / ___ / /_/ / /_/ /_/ /_/ / /_/ / /__   / /_/ / /
- /_/  |_\__,_/\__/\____/_____/\____/\___/   \__,_/_/
+ /_/  |_|\__,_/\__/\____/_____/\____/\___/   \__,_/_/
 ```
 
 **Your codebase. Documented. Automatically.**
@@ -19,73 +19,60 @@
 
 ---
 
-## ✨ Features
+## Overview
 
-- **🌳 ASCII File Tree** — Recursively scans any directory and renders a beautiful tree
-- **🙈 .gitignore Aware** — Automatically respects all `.gitignore` rules up the directory tree
-- **🤖 AI-Powered Analysis** — Extracts features and descriptions using Groq (free) or local Ollama
-- **📦 Package Manager Detection** — Auto-detects npm, yarn, pnpm, bun, pip, poetry, cargo, go
-- **👁 Watch Mode** — Incrementally regenerates README as you save files via Chokidar
-- **🖥 Web Dashboard** — React + Vite + TailwindCSS live preview with SSE real-time updates
-- **🆓 100% Free AI** — Groq free tier (6k req/day) + Ollama local fallback
+AutoDoc.ai scans a repository, understands its structure, and generates a production-ready README template that teams can ship with confidence. The platform combines deterministic file analysis with AI-assisted feature extraction to create docs that are accurate, maintainable, and readable.
 
-## 🚀 Quick Start
+## Core Capabilities
+
+- Automated README generation from real project files
+- Intelligent file tree modeling with `.gitignore` awareness
+- Framework and package manager detection for setup instructions
+- Watch mode for continuous documentation updates during development
+- Web dashboard with live preview and regeneration controls
+- Local-first or hosted AI provider support (Groq + Ollama)
+
+## Quick Start
 
 ```bash
-# Clone and install
 git clone https://github.com/your-org/autodoc-ai.git
 cd autodoc-ai
 npm install
-
-# Configure (takes 30 seconds)
-cp .env.example .env
-# → Add your FREE Groq key from https://console.groq.com
-
-# Generate README for any project
-npx autodoc generate /path/to/your/project
-
-# Enable live watch mode
-npx autodoc watch /path/to/your/project
-
-# Launch the web dashboard
-npm run dev   # → http://localhost:3000
+npm run dev
 ```
 
-## 📁 Project Structure
+- Frontend: `http://localhost:3000`
+- API server: `http://localhost:4000`
+
+## Platform Architecture
 
 ```
 autodoc-ai/
 ├── packages/
-│   ├── cli/          # Node.js CLI engine
-│   └── frontend/     # React + Vite dashboard
-├── server/           # Express API + SSE bridge
-├── docs/             # Documentation
-├── tests/            # Test suites
-└── scripts/          # Build & release scripts
+│   ├── cli/          # CLI scanner, detectors, and README generators
+│   └── frontend/     # React dashboard for configuration and preview
+├── server/           # Express API routes for scan, config, and README state
+├── docs/             # User-facing guides and platform documentation
+├── tests/            # Generator and scanner test suites
+└── scripts/          # Build, release, and development scripts
 ```
 
-## 🛠 Tech Stack
+## How README Generation Works
 
-| Layer | Technology | Cost |
-|-------|-----------|------|
-| CLI | Node.js + Commander.js + Chokidar | Free |
-| Frontend | React + Vite + TailwindCSS + TypeScript | Free |
-| AI Primary | Groq API (llama3-70b-8192) | Free 6k/day |
-| AI Fallback | Ollama (local codellama:7b) | Free |
-| Gitignore | `ignore` npm package | Free |
-| Server | Express.js + SSE | Free |
+1. **Scan** — Collects source files while respecting ignore rules.
+2. **Analyze** — Detects language, framework, and runtime signals.
+3. **Synthesize** — Produces sections for features, architecture, structure, setup, and license.
+4. **Refine** — Supports iterative regeneration through watch mode and dashboard actions.
 
-## 📖 Documentation
+Generated README output now includes an architecture overview that explains the top-level file tree, helping users understand how the project is organized before they dive into code.
+
+## Documentation
 
 - [Getting Started](docs/getting-started.md)
 - [Configuration](docs/configuration.md)
 - [AI Providers](docs/ai-providers.md)
 - [Watch Mode](docs/watch-mode.md)
 
-## 📄 License
+## License
 
 MIT © 2026 AutoDoc.ai
-
----
-
-> 📖 *This README was generated with AutoDoc.ai itself.*

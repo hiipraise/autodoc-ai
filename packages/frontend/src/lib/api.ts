@@ -1,6 +1,7 @@
 import type { ApiResponse, ScanResult, AutoDocConfig } from './types';
 
-const BASE = '/api';
+const baseFromEnv = import.meta.env.VITE_API_BASE_URL?.trim();
+const BASE = baseFromEnv && baseFromEnv.length > 0 ? baseFromEnv.replace(/\/$/, '') : '/api';
 
 async function request<T>(path: string, init?: RequestInit): Promise<ApiResponse<T>> {
   try {
