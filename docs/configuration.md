@@ -51,3 +51,13 @@ Order matters. Remove a section name to exclude it from the output.
 
 ### `watch.debounceMs`
 Milliseconds to wait after the last file change before regenerating. Default: `1500`.
+
+### `VITE_API_BASE_URL` (frontend deployment)
+Set this for production deployments where the frontend and API are hosted on different origins.
+
+Example:
+```bash
+VITE_API_BASE_URL=https://your-api-domain.com/api
+```
+
+If omitted, the frontend defaults to `/api`, which is ideal when your reverse proxy routes API traffic on the same host.

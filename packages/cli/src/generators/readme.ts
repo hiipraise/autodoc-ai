@@ -16,8 +16,60 @@ interface ReadmeOptions {
   config: AutoDocConfig;
 }
 
+const ICON_MAP: Record<string, string> = {
+  'TypeScript': 'ts',
+  'JavaScript': 'js',
+  'Python': 'py',
+  'Go': 'go',
+  'Rust': 'rust',
+  'React': 'react',
+  'Next.js': 'nextjs',
+  'Vite': 'vite',
+  'Node.js': 'nodejs',
+  'Express': 'express',
+  'Docker': 'docker',
+};
+
+function generateArchitectureSection(tree: TreeNode): string {
+  const children = tree.children ?? [];
+  if (!children.length) {
+    return ['## Architecture Overview', '', '- Project appears empty at scan time.'].join('\n');
+  }
+
+  const important = children.slice(0, 8).map((node) => {
+    if (node.type === 'directory') {
+      const childCount = node.children?.length ?? 0;
+      return `- \`${node.name}/\`: primary module directory with ${childCount} immediate item${childCount === 1 ? '' : 's'}.`;
+    }
+    return `- \`${node.name}\`: top-level project file used for configuration, docs, or entrypoint logic.`;
+  });
+
+  return [
+    '## Architecture Overview',
+    '',
+    'This repository is organized around clear top-level modules so new contributors can identify where runtime code, configuration, and docs live.',
+    '',
+    ...important,
+  ].join('\n');
+}
+
+function generateTechStackSection(frameworks: string[], languages: string[]): string {
+  const items = [...new Set([...frameworks, ...languages])];
+  if (!items.length) {
+    return ['## Tech Stack', '', '_No frameworks or languages detected_'].join('\n');
+  }
+
+  const withIcons = items.map((item) => {
+    const slug = ICON_MAP[item];
+    if (!slug) return `- ${item}`;
+    return `- <img src="https://skillicons.dev/icons?i=${slug}" alt="${item}" height="16" /> ${item}`;
+  });
+
+  return ['## Tech Stack', '', ...withIcons].join('\n');
+}
+
 export async function generateReadme(opts: ReadmeOptions): Promise<string> {
-  const { targetDir, files, tree, features, config } = opts;
+  const { targetDir, files, tree, features } = opts;
   const profile = await detectProjectProfile(targetDir, files);
   const projectName = profile.projectName || path.basename(targetDir);
 
@@ -26,9 +78,10 @@ export async function generateReadme(opts: ReadmeOptions): Promise<string> {
   const installSection = generateInstallSection(profile);
   const featuresSection = generateFeaturesSection(features);
   const licenseSection = generateLicenseSection(profile);
+  const architectureSection = generateArchitectureSection(tree);
+  const techStackSection = generateTechStackSection(profile.frameworks, profile.languages);
 
   const sections: string[] = [
-    // Header
     `# ${projectName}`,
     '',
     profile.description ? `> ${profile.description}` : '',
@@ -37,15 +90,15 @@ export async function generateReadme(opts: ReadmeOptions): Promise<string> {
     '',
     '---',
     '',
-
-    // Features
     featuresSection,
     '',
     '---',
     '',
-
-    // File Tree
-    '## 📁 Project Structure',
+    architectureSection,
+    '',
+    '---',
+    '',
+    '## Project Structure',
     '',
     '```',
     asciiTree,
@@ -53,32 +106,20 @@ export async function generateReadme(opts: ReadmeOptions): Promise<string> {
     '',
     '---',
     '',
-
-    // Installation
     installSection,
     '',
     '---',
     '',
-
-    // Tech Stack
-    '## 🛠 Tech Stack',
-    '',
-    profile.frameworks.length > 0
-      ? profile.frameworks.map(f => `- **${f}**`).join('\n')
-      : '_No frameworks detected_',
+    techStackSection,
     '',
     '---',
     '',
-
-    // License
     licenseSection,
     '',
-
-    // Footer
     '---',
     '',
-    `> 📖 Generated with [AutoDoc.ai](https://github.com/autodoc-ai/autodoc) — *Your codebase. Documented. Automatically.*`,
+    '> Generated with [AutoDoc.ai](https://github.com/autodoc-ai/autodoc) — professional documentation from your source tree.',
   ];
 
-  return sections.filter(s => s !== null).join('\n');
+  return sections.filter(Boolean).join('\n');
 }
