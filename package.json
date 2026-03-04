@@ -24,7 +24,7 @@
     "browserslist": "^4.28.1",
     "caniuse-lite": "^1.0.30001775",
     "concurrently": "^8.2.0",
-    "eslint": "^9.0.0",
+    "eslint": "^8.57.1",
     "rimraf": "^5.0.0",
     "typescript": "^5.4.0"
   },
