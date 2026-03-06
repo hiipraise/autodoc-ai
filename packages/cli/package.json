@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "AI-powered README generator CLI",
   "bin": {
-    "autodoc": "./dist/index.js"
+    "autodoc-ai": "./dist/index.js"
   },
   "scripts": {
     "dev": "tsx watch src/index.ts",
