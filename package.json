@@ -1,6 +1,7 @@
 {
   "name": "autodoc-ai",
   "version": "1.0.0",
+  "packageManager": "npm@11.4.2",
   "description": "AI-powered README generator with live watch mode",
   "private": true,
   "workspaces": [
