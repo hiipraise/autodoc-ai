@@ -103,13 +103,34 @@ async function scanDirectory(rootDir: string) {
   return { files, tree: root, features, fileCount: files.length };
 }
 
+
+function isWindowsAbsolutePath(input: string): boolean {
+  return /^[a-zA-Z]:[\/]/.test(input) || /^\\/.test(input);
+}
+
+function resolveTargetDirectory(inputDir: string): { targetDir?: string; error?: string } {
+  const dir = inputDir.trim() || '.';
+
+  if (process.platform !== 'win32' && isWindowsAbsolutePath(dir)) {
+    return {
+      error: 'The provided path looks like a Windows local path. This server cannot access files on your local machine. Use a path that exists on the server (for example: "." or "/opt/render/project/src").',
+    };
+  }
+
+  return { targetDir: path.resolve(dir) };
+}
+
 // ── Routes ────────────────────────────────────────────────────────────────────
 
 let latestScan: any = null;
 
 scanRouter.post('/', async (req, res) => {
   const { dir = '.' } = req.body as { dir: string };
-  const targetDir = path.resolve(dir);
+  const { targetDir, error } = resolveTargetDirectory(dir);
+
+  if (error || !targetDir) {
+    return res.status(400).json({ success: false, error: error ?? 'Invalid directory path.' });
+  }
 
   try {
     if (!await fs.pathExists(targetDir)) {

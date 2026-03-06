@@ -21,7 +21,11 @@ readmeRouter.get('/', (_req, res) => {
 
 readmeRouter.post('/regenerate', async (req, res) => {
   const { dir = '.' } = req.body as { dir: string };
-  const targetDir = path.resolve(dir);
+  const { targetDir, error } = resolveTargetDirectory(dir);
+
+  if (error || !targetDir) {
+    return res.status(400).json({ success: false, error: error ?? 'Invalid directory path.' });
+  }
 
   try {
     const snapshot = await scanProjectSnapshot(targetDir);
@@ -51,6 +55,23 @@ readmeRouter.post('/regenerate', async (req, res) => {
 readmeRouter.get('/history', (_req, res) => {
   res.json({ success: true, data: history });
 });
+
+
+function isWindowsAbsolutePath(input: string): boolean {
+  return /^[a-zA-Z]:[\/]/.test(input) || /^\\/.test(input);
+}
+
+function resolveTargetDirectory(inputDir: string): { targetDir?: string; error?: string } {
+  const dir = inputDir.trim() || '.';
+
+  if (process.platform !== 'win32' && isWindowsAbsolutePath(dir)) {
+    return {
+      error: 'The provided path looks like a Windows local path. This server cannot access files on your local machine. Use a path that exists on the server (for example: "." or "/opt/render/project/src").',
+    };
+  }
+
+  return { targetDir: path.resolve(dir) };
+}
 
 // Called by CLI watch mode to push new README content in real time
 readmeRouter.post('/push', async (req, res) => {
