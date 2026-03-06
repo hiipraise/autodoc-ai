@@ -1,5 +1,6 @@
+// packages/frontend/src/components/docs/sections/PrerequisitesSection.tsx
 import { Package, ExternalLink } from 'lucide-react';
-import { SectionHeading, Prose } from '../SectionHeading';
+import { SectionHeading } from '../SectionHeading';
 import { Callout } from '../Callout';
 
 const REQS = [

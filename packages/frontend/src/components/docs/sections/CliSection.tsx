@@ -1,5 +1,6 @@
+// packages/frontend/src/components/docs/sections/CliSection.tsx
 import { Terminal } from 'lucide-react';
-import { SectionHeading, SubHeading, Prose } from '../SectionHeading';
+import { SectionHeading, SubHeading } from '../SectionHeading';
 import { CodeBlock } from '../CodeBlock';
 
 interface Flag { flag: string; desc: string }

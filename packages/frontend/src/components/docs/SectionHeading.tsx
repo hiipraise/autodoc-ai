@@ -1,3 +1,4 @@
+// packages/frontend/src/components/docs/SectionHeading.tsx
 import type { LucideIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
 

@@ -1,5 +1,6 @@
+// packages/frontend/src/components/docs/sections/ConfigSection.tsx
 import { Settings } from 'lucide-react';
-import { SectionHeading, SubHeading, Prose } from '../SectionHeading';
+import { SectionHeading, SubHeading } from '../SectionHeading';
 import { CodeBlock } from '../CodeBlock';
 
 const FIELDS = [

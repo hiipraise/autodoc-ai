@@ -1,5 +1,6 @@
+// packages/frontend/src/components/docs/sections/WatchSection.tsx
 import { Eye, CheckCircle2, XCircle, FolderOpen, ScanSearch, RefreshCw, Cpu, FileText, Radio } from 'lucide-react';
-import { SectionHeading, SubHeading, Prose } from '../SectionHeading';
+import { SectionHeading, SubHeading } from '../SectionHeading';
 import { CodeBlock } from '../CodeBlock';
 import { Callout } from '../Callout';
 
