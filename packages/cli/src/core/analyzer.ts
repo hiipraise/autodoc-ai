@@ -11,26 +11,16 @@ export async function analyzeCode(
 ): Promise<string[]> {
   // Gather the most relevant files for analysis
   const relevantFiles = files
-    .filter(f => f.content && f.content.trim().length > 50)
-    .sort((a, b) => {
-      // Prioritize entry points and config files
-      const priority = (f: ScannedFile) => {
-        if (/index\.(ts|js|tsx|jsx)$/.test(f.relativePath)) return 0;
-        if (/main\.(ts|js|tsx|jsx)$/.test(f.relativePath)) return 1;
-        if (/app\.(ts|js|tsx|jsx)$/i.test(f.relativePath)) return 2;
-        if (f.ext === '.json') return 3;
-        return 4;
-      };
-      return priority(a) - priority(b);
-    })
-    .slice(0, 20);
+    .filter((f) => f.content && f.content.trim().length > 50)
+    .sort((a, b) => priority(a) - priority(b))
+    .slice(0, 30);
 
   if (relevantFiles.length === 0) return [];
 
   // Build a compact code snapshot
   let snapshot = '';
   for (const file of relevantFiles) {
-    const excerpt = (file.content ?? '').slice(0, 1000);
+    const excerpt = (file.content ?? '').slice(0, 1200);
     snapshot += `\n### ${file.relativePath}\n\`\`\`\n${excerpt}\n\`\`\`\n`;
     if (snapshot.length > MAX_CONTENT_CHARS) break;
   }
@@ -50,18 +40,32 @@ export async function analyzeCode(
   return [];
 }
 
+function priority(f: ScannedFile): number {
+  const fileName = f.relativePath.toLowerCase();
+
+  if (/^(readme|license|contributing)(\.|$)/i.test(fileName.split('/').pop() ?? '')) return 0;
+  if (/package\.json$/.test(fileName)) return 1;
+  if (/(pnpm-lock|package-lock|yarn\.lock|turbo\.json|tsconfig\.json)$/.test(fileName)) return 2;
+  if (/(index|main|app|server|client)\.(ts|js|tsx|jsx|py|go|rs)$/.test(fileName)) return 3;
+  if (/src\//.test(fileName)) return 4;
+  if (/(routes|controllers|services|components|pages|hooks|api)\//.test(fileName)) return 5;
+  if (f.ext === '.json' || f.ext === '.md') return 6;
+
+  return 10;
+}
+
 function deriveHeuristicFeatures(files: ScannedFile[]): string[] {
   const features: string[] = [];
-  const paths = files.map(f => f.relativePath.toLowerCase());
+  const paths = files.map((f) => f.relativePath.toLowerCase());
 
-  if (paths.some(p => p.includes('auth'))) features.push('Provides user authentication and authorization');
-  if (paths.some(p => p.includes('api'))) features.push('Exposes a RESTful API interface');
-  if (paths.some(p => p.includes('dashboard'))) features.push('Includes an interactive dashboard UI');
-  if (paths.some(p => p.includes('watch'))) features.push('Supports real-time file watching');
-  if (paths.some(p => p.includes('test'))) features.push('Includes automated test suites');
-  if (paths.some(p => p.includes('docker'))) features.push('Supports containerized deployment with Docker');
-  if (paths.some(p => p.includes('config'))) features.push('Offers flexible configuration options');
-  if (paths.some(p => p.includes('cli'))) features.push('Provides a command-line interface');
+  if (paths.some((p) => p.includes('auth'))) features.push('Provides user authentication and authorization');
+  if (paths.some((p) => p.includes('api'))) features.push('Exposes a RESTful API interface');
+  if (paths.some((p) => p.includes('dashboard'))) features.push('Includes an interactive dashboard UI');
+  if (paths.some((p) => p.includes('watch'))) features.push('Supports real-time file watching');
+  if (paths.some((p) => p.includes('test'))) features.push('Includes automated test suites');
+  if (paths.some((p) => p.includes('docker'))) features.push('Supports containerized deployment with Docker');
+  if (paths.some((p) => p.includes('config'))) features.push('Offers flexible configuration options');
+  if (paths.some((p) => p.includes('cli'))) features.push('Provides a command-line interface');
 
   return features;
 }

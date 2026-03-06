@@ -22,7 +22,7 @@ export default function Dashboard() {
     await regenerate(dirInput);
   };
 
-  const features: string[] = [];
+  const features = result?.features ?? [];
 
   return (
     <div className="min-h-screen bg-[#182c38] text-white">
