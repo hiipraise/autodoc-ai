@@ -6,6 +6,7 @@ import { generateAsciiTree } from '../core/tree';
 import { generateInstallSection } from './sections/install';
 import { generateFeaturesSection } from './sections/features';
 import { generateLicenseSection } from './sections/license';
+import { generateUsageSection } from './sections/usage';
 import { generateBadges } from './badges';
 
 interface ReadmeOptions {
@@ -36,20 +37,31 @@ function generateArchitectureSection(tree: TreeNode): string {
     return ['## Architecture Overview', '', '- Project appears empty at scan time.'].join('\n');
   }
 
-  const important = children.slice(0, 8).map((node) => {
-    if (node.type === 'directory') {
-      const childCount = node.children?.length ?? 0;
-      return `- \`${node.name}/\`: primary module directory with ${childCount} immediate item${childCount === 1 ? '' : 's'}.`;
-    }
-    return `- \`${node.name}\`: top-level project file used for configuration, docs, or entrypoint logic.`;
-  });
+  const directories = children.filter((node) => node.type === 'directory');
+  const files = children.filter((node) => node.type === 'file');
+
+  const importantDirs = directories
+    .sort((a, b) => (b.children?.length ?? 0) - (a.children?.length ?? 0))
+    .slice(0, 6)
+    .map((dir) => {
+      const nested = dir.children?.length ?? 0;
+      return `- \`${dir.name}/\` — major module area containing ${nested} top-level item${nested === 1 ? '' : 's'}.`;
+    });
+
+  const keyFiles = files
+    .slice(0, 5)
+    .map((file) => `- \`${file.name}\` — top-level config or orchestration file.`);
 
   return [
     '## Architecture Overview',
     '',
-    'This repository is organized around clear top-level modules so new contributors can identify where runtime code, configuration, and docs live.',
+    `The codebase is split into **${directories.length} primary directories** and **${files.length} top-level files**, making it easier to locate runtime code, tooling, and docs quickly.`,
     '',
-    ...important,
+    '### Primary modules',
+    ...(importantDirs.length ? importantDirs : ['- _No top-level module directories detected during scan._']),
+    '',
+    '### Key top-level files',
+    ...(keyFiles.length ? keyFiles : ['- _No top-level files detected during scan._']),
   ].join('\n');
 }
 
@@ -68,14 +80,30 @@ function generateTechStackSection(frameworks: string[], languages: string[]): st
   return ['## Tech Stack', '', ...withIcons].join('\n');
 }
 
+function generateContributingSection(): string {
+  return [
+    '## Contributing',
+    '',
+    'Contributions are welcome. Before opening a pull request:',
+    '',
+    '1. Create a focused branch for your change.',
+    '2. Run local quality checks (lint/tests/build).',
+    '3. Update docs when behavior or APIs change.',
+  ].join('\n');
+}
+
 export async function generateReadme(opts: ReadmeOptions): Promise<string> {
-  const { targetDir, files, tree, features } = opts;
+  const { targetDir, files, tree, features, config } = opts;
   const profile = await detectProjectProfile(targetDir, files);
   const projectName = profile.projectName || path.basename(targetDir);
 
   const badges = generateBadges(profile);
-  const asciiTree = generateAsciiTree(tree, { maxDepth: 4, showIcons: false });
+  const asciiTree = generateAsciiTree(tree, {
+    maxDepth: config.readme.treeMaxDepth || config.scan.maxDepth || 8,
+    showIcons: config.readme.showFileIcons,
+  });
   const installSection = generateInstallSection(profile);
+  const usageSection = generateUsageSection(profile);
   const featuresSection = generateFeaturesSection(features);
   const licenseSection = generateLicenseSection(profile);
   const architectureSection = generateArchitectureSection(tree);
@@ -87,6 +115,19 @@ export async function generateReadme(opts: ReadmeOptions): Promise<string> {
     profile.description ? `> ${profile.description}` : '',
     '',
     badges,
+    '',
+    '---',
+    '',
+    '## Table of Contents',
+    '',
+    '- [Features](#features)',
+    '- [Architecture Overview](#architecture-overview)',
+    '- [Project Structure](#project-structure)',
+    '- [Installation & Setup](#installation--setup)',
+    '- [Usage](#-usage)',
+    '- [Tech Stack](#tech-stack)',
+    '- [Contributing](#contributing)',
+    '- [License](#license)',
     '',
     '---',
     '',
@@ -110,7 +151,15 @@ export async function generateReadme(opts: ReadmeOptions): Promise<string> {
     '',
     '---',
     '',
+    usageSection,
+    '',
+    '---',
+    '',
     techStackSection,
+    '',
+    '---',
+    '',
+    generateContributingSection(),
     '',
     '---',
     '',
