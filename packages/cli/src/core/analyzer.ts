@@ -1,3 +1,4 @@
+// packages/cli/src/core/analyzer.ts
 import type { ScannedFile } from './scanner';
 import type { AutoDocConfig } from '../utils/config';
 import { routeAI } from '../ai/router';

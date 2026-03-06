@@ -167,7 +167,7 @@ export async function generateReadme(opts: ReadmeOptions): Promise<string> {
     '',
     '---',
     '',
-    '> Generated with [AutoDoc.ai](https://github.com/autodoc-ai/autodoc) — professional documentation from your source tree.',
+    '> Generated with [AutoDoc.ai](https://github.com/hiipraise/autodoc-ai) — professional documentation from your source tree.',
   ];
 
   return sections.filter(Boolean).join('\n');
