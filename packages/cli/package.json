@@ -1,9 +1,9 @@
 {
   "name": "autodoctools",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "AI-powered README generator CLI",
   "bin": {
-    "autodoc-ai": "./dist/index.js"
+    "autodoc": "./dist/index.js"
   },
   "scripts": {
     "dev": "tsx watch src/index.ts",

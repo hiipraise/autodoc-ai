@@ -1,20 +1,26 @@
-# AutoDocTools CLI
+# AutoDoc AI
 
-AutoDocTools is a command-line tool that scans your project and generates a README for you.
+AutoDoc AI is a toolkit for generating and updating project README files.
 
-This guide is focused on **how to use the CLI with AI** after installing with `npx autodoctools`.
+If you are here to **use the npm CLI package**, start with:
+- `packages/cli/README.md` for full user docs.
+
+This root README gives a quick product overview plus the fastest path for CLI users.
 
 ---
 
-## 1) Run the CLI (no install required)
+## CLI package (public npm)
 
-From inside your project folder:
+Package: `autodoctools`  
+Binary: `autodoc-ai`
+
+Run without global install:
 
 ```bash
 npx autodoctools --help
 ```
 
-You can also run specific commands directly:
+Common commands:
 
 ```bash
 npx autodoctools init .
@@ -24,63 +30,32 @@ npx autodoctools watch .
 
 ---
 
-## 2) Choose your AI provider
+## AI provider setup
 
-AutoDocTools supports:
-
-- **Groq** (cloud API key required)
-- **Ollama** (local model, no cloud key)
-
-### Option A: Groq (recommended for most users)
-
-1. Create a free Groq key at: <https://console.groq.com>
-2. Set the key in your shell before running the CLI:
+### Groq
 
 ```bash
 export GROQ_API_KEY="gsk_your_key_here"
 ```
 
-Then run generation:
-
-```bash
-npx autodoctools generate .
-```
-
-### Option B: Ollama (local AI)
-
-1. Install and run Ollama locally.
-2. Pull a model (example):
+### Ollama
 
 ```bash
 ollama pull codellama:7b
-```
-
-3. (Optional) Set a custom Ollama URL:
-
-```bash
 export OLLAMA_BASE_URL="http://localhost:11434"
 ```
 
-Then run generation with config set to Ollama (see next section).
-
 ---
 
-## 3) Create your project config (`.autodoc.json`)
+## Where users configure AI behavior
 
-Run:
+Run this once in your repo:
 
 ```bash
 npx autodoctools init .
 ```
 
-This creates a `.autodoc.json` file in your project root.
-
-That file is where you define AI behavior like:
-
-- provider (`groq` or `ollama`)
-- model name
-- fallback provider
-- README output path
+It creates `.autodoc.json` where users choose provider/model/output.
 
 Minimal example:
 
@@ -99,100 +74,37 @@ Minimal example:
 
 ---
 
-## 4) Where does AI analysis input come from?
+## Where AI gets analysis input
 
-You do **not** paste code into the AI manually.
+Users do not paste code into prompts.
 
-AutoDocTools automatically:
-
-1. Scans your project directory.
-2. Respects ignore rules (like `.gitignore`).
-3. Selects relevant files.
-4. Sends compact code excerpts to the selected AI provider.
-5. Uses returned insights to generate README sections.
-
-So the required “input for analysis” is simply your project files in the folder you run against:
+The CLI reads files from the target project directory passed to `generate` or `watch`, applies ignore rules, then sends a compact snapshot to the configured AI provider.
 
 ```bash
-npx autodoctools generate /path/to/your/project
+npx autodoctools generate /path/to/project
 ```
 
 ---
 
-## 5) Typical user workflow
+## Workspace layout
+
+- `packages/cli` — published npm CLI package (`autodoctools`)
+- `packages/frontend` — web interface
+- `server` — API backend for dashboard/watch integrations
+- `docs` — additional usage/config references
+
+---
+
+## Development (repo)
 
 ```bash
-# inside your repository
-npx autodoctools init .
-
-# set provider key once per terminal session (Groq)
-export GROQ_API_KEY="gsk_your_key_here"
-
-# generate README now
-npx autodoctools generate .
-
-# keep README auto-updated while you code
-npx autodoctools watch .
+npm install
+npm run build
+npm test
 ```
 
 ---
 
-## 6) Useful command options
+## License
 
-Generate once:
-
-```bash
-npx autodoctools generate . --output ./README.md
-```
-
-Generate without AI (heuristics only):
-
-```bash
-npx autodoctools generate . --no-ai
-```
-
-Preview without writing file:
-
-```bash
-npx autodoctools generate . --dry-run
-```
-
-Watch mode with custom debounce:
-
-```bash
-npx autodoctools watch . --debounce 2000
-```
-
----
-
-## 7) If AI is not configured
-
-- If `GROQ_API_KEY` is missing, Groq cannot run.
-- If Ollama is unavailable, local fallback cannot run.
-- In these cases, use:
-
-```bash
-npx autodoctools generate . --no-ai
-```
-
-You will still get a generated README from non-AI project analysis.
-
----
-
-## 8) Quick FAQ
-
-**Where do I put my Groq key?**  
-Set it as an environment variable in your terminal:
-
-```bash
-export GROQ_API_KEY="gsk_..."
-```
-
-**Do I put my key inside `.autodoc.json`?**  
-No. Keep secrets in environment variables, not project config files.
-
-**Where do I put files for AI analysis?**  
-In your project folder. AutoDocTools reads files from the directory you pass to `generate` or `watch`.
-
-**Can I run without cloud AI?**  
-Yes. Use Ollama locally or run with `--no-ai`.
+MIT

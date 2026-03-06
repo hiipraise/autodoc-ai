@@ -66,4 +66,4 @@ This project is licensed under the [MIT License](https://opensource.org/licenses
 
 Copyright © 2026
 ---
-> Generated with [AutoDoc.ai](https://github.com/autodoc-ai/autodoc) — professional documentation from your source tree.
+> Generated with [AutoDoc.ai](https://github.com/autodoc-ai/autodoc) — professional documentation from your source tree.oc-ai/autodoc)oc-ai/autodoc)
