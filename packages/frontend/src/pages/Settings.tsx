@@ -1,26 +1,55 @@
 import { useState, useEffect } from 'react';
-import { Settings as SettingsIcon, Save, Check } from 'lucide-react';
-import { Card }   from '../components/ui/Card';
+import { Settings as SettingsIcon, Save, Check, TriangleAlert, RotateCcw } from 'lucide-react';
+import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { api }    from '../lib/api';
+import { api } from '../lib/api';
 import type { AutoDocConfig } from '../lib/types';
 
+const FALLBACK_CONFIG: AutoDocConfig = {
+  output: './README.md',
+  ai: { provider: 'groq', model: 'llama3-70b-8192' },
+  scan: { maxDepth: 8, maxFileSizeKB: 100 },
+  watch: { debounceMs: 1500 },
+};
+
 export default function Settings() {
-  const [config,  setConfig]  = useState<AutoDocConfig | null>(null);
-  const [saved,   setSaved]   = useState(false);
+  const [config, setConfig] = useState<AutoDocConfig | null>(null);
+  const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
+
+  const loadConfig = async () => {
+    setLoading(true);
+    setLoadError(null);
+
+    const res = await api.config.get();
+    if (res.success && res.data) {
+      setConfig(res.data);
+    } else {
+      setConfig(FALLBACK_CONFIG);
+      setLoadError(res.error ?? 'Could not load server config. Using local defaults.');
+    }
+
+    setLoading(false);
+  };
 
   useEffect(() => {
-    api.config.get().then(res => res.data && setConfig(res.data));
+    void loadConfig();
   }, []);
 
   const handleSave = async () => {
     if (!config) return;
     setLoading(true);
-    await api.config.update(config);
-    setSaved(true);
+    const res = await api.config.update(config);
+    if (res.success && res.data) {
+      setConfig(res.data);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+      setLoadError(null);
+    } else {
+      setLoadError(res.error ?? 'Failed to save settings.');
+    }
     setLoading(false);
-    setTimeout(() => setSaved(false), 2000);
   };
 
   if (!config) {
@@ -44,7 +73,7 @@ export default function Settings() {
     <input
       type={type}
       value={value}
-      onChange={e => onChange(e.target.value)}
+      onChange={(e) => onChange(e.target.value)}
       className="w-full bg-[#0f1f28] border border-[#FE7F2D]/15 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#FE7F2D] transition-colors"
     />
   );
@@ -56,37 +85,46 @@ export default function Settings() {
         <h1 className="text-xl font-bold">Settings</h1>
       </div>
 
+      {loadError && (
+        <div className="mb-4 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-200 flex items-center justify-between gap-2">
+          <span className="flex items-center gap-2"><TriangleAlert size={14} />{loadError}</span>
+          <button onClick={() => void loadConfig()} className="text-amber-100 hover:text-white inline-flex items-center gap-1">
+            <RotateCcw size={12} /> Retry
+          </button>
+        </div>
+      )}
+
       <div className="space-y-4">
         <Card title="AI Provider" icon={<SettingsIcon size={13} />}>
           <div className="space-y-3">
             {field('Provider',
               <select
                 value={config.ai.provider}
-                onChange={e => setConfig({ ...config, ai: { ...config.ai, provider: e.target.value } })}
+                onChange={(e) => setConfig({ ...config, ai: { ...config.ai, provider: e.target.value } })}
                 className="w-full bg-[#0f1f28] border border-[#FE7F2D]/15 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#FE7F2D]"
               >
                 <option value="groq">Groq (Free, recommended)</option>
                 <option value="ollama">Ollama (Local, no API key)</option>
               </select>
             )}
-            {field('Model', input(config.ai.model, v => setConfig({ ...config, ai: { ...config.ai, model: v } })))}
+            {field('Model', input(config.ai.model, (v) => setConfig({ ...config, ai: { ...config.ai, model: v } })))}
           </div>
         </Card>
 
         <Card title="Scan Settings" icon={<SettingsIcon size={13} />}>
           <div className="grid grid-cols-2 gap-3">
             {field('Max Depth',
-              input(config.scan.maxDepth, v => setConfig({ ...config, scan: { ...config.scan, maxDepth: +v } }), 'number')
+              input(config.scan.maxDepth, (v) => setConfig({ ...config, scan: { ...config.scan, maxDepth: +v } }), 'number')
             )}
             {field('Max File Size (KB)',
-              input(config.scan.maxFileSizeKB, v => setConfig({ ...config, scan: { ...config.scan, maxFileSizeKB: +v } }), 'number')
+              input(config.scan.maxFileSizeKB, (v) => setConfig({ ...config, scan: { ...config.scan, maxFileSizeKB: +v } }), 'number')
             )}
           </div>
         </Card>
 
         <Card title="Watch Mode" icon={<SettingsIcon size={13} />}>
           {field('Debounce Delay (ms)',
-            input(config.watch.debounceMs, v => setConfig({ ...config, watch: { ...config.watch, debounceMs: +v } }), 'number')
+            input(config.watch.debounceMs, (v) => setConfig({ ...config, watch: { ...config.watch, debounceMs: +v } }), 'number')
           )}
         </Card>
 
