@@ -1,6 +1,6 @@
 {
   "name": "autodoctools",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "AI-powered README generator CLI",
   "bin": {
     "autodoc-ai": "./dist/index.js"
