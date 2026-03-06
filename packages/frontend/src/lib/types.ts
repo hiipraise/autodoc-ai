@@ -8,6 +8,7 @@ export interface TreeNode {
 export interface ScanResult {
   files: ScannedFileSummary[];
   tree: TreeNode;
+  features: string[];
   fileCount: number;
   scannedAt: string;
 }
