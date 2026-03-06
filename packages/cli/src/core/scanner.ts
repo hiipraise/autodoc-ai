@@ -29,7 +29,7 @@ const ANALYZE_EXTENSIONS = new Set([
   '.py', '.go', '.rs', '.java', '.cs', '.rb', '.php', '.swift', '.kt',
   '.vue', '.svelte', '.astro',
   '.md', '.mdx', '.json', '.toml', '.yaml', '.yml',
-  '.sh', '.bash', '.zsh', '.env.example',
+  '.sh', '.bash', '.zsh',
 ]);
 
 const DEFAULT_IGNORE = [
@@ -48,7 +48,7 @@ export class Scanner {
     const allPaths = await glob('**/*', {
       cwd: this.rootDir,
       nodir: false,
-      dot: false,
+      dot: true,
       ignore: DEFAULT_IGNORE,
     });
 
@@ -70,7 +70,7 @@ export class Scanner {
           size: stat.size,
         };
 
-        if (ANALYZE_EXTENSIONS.has(ext) && stat.size < 100_000) {
+        if (this.shouldAnalyzeContent(relPath, ext) && stat.size < 100_000) {
           scanned.content = await fs.readFile(absPath, 'utf-8').catch(() => undefined);
         }
 
@@ -82,6 +82,11 @@ export class Scanner {
 
     const tree = this.buildTree(files.map((f) => f.relativePath));
     return { files, tree };
+  }
+
+  private shouldAnalyzeContent(relPath: string, ext: string): boolean {
+    if (ANALYZE_EXTENSIONS.has(ext)) return true;
+    return relPath.endsWith('.env.example');
   }
 
   private buildTree(filePaths: string[]): TreeNode {
