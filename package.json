@@ -1,7 +1,7 @@
 {
   "name": "autodoc-ai",
   "version": "1.0.0",
-   "packageManager": "npm@11.4.2",
+  "packageManager": "npm@11.4.2",
   "description": "AI-powered README generator with live watch mode",
   "private": true,
   "optionalDependencies": {
@@ -30,6 +30,7 @@
     "concurrently": "^8.2.0",
     "eslint": "^8.57.1",
     "rimraf": "^5.0.0",
+    "tsup": "^8.5.1",
     "typescript": "^5.4.0"
   },
   "engines": {
